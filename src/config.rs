@@ -1,8 +1,6 @@
 use std::io;
 use std::io::Read;
-use std::process;
 use std::error::Error;
-use std::env;
 
 pub struct Config {
     pub filename: String,

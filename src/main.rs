@@ -1,8 +1,4 @@
-#[macro_use]
-extern crate clap;
-
 extern crate stegosaurus;
-
 
 use std::process;
 
