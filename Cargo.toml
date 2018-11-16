@@ -2,5 +2,7 @@
 name = "stegosaurus"
 version = "0.1.0"
 authors = ["Martin Fracker, Jr. <martin.frackerjr@gmail.com>"]
+description = "Reads data from stdin and sends the output hidden stegonagraphically to stdout"
 
 [dependencies]
+clap = "2"
