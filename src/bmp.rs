@@ -1,11 +1,14 @@
-use super::{Embed, Save};
+use std::iter::Iterator;
 use std::error::Error;
+use std::slice;
 use image::{
     DynamicImage,
     GenericImageView,
     ImageBuffer,
     RgbaImage
 };
+
+use super::{Embed, Save};
 
 pub struct BmpBase {
     image: DynamicImage
@@ -26,7 +29,7 @@ struct BmpFinal {
 }
 
 impl Embed for BmpBase {
-    fn embed_data(&self, data: &[u8]) -> Box<dyn Save> {
+    fn embed_data(&self, data: Vec<u8>) -> Box<dyn Save> {
         let (width, height) = self.image.dimensions();
         let mut buffer = ImageBuffer::from_fn(width, height, |x, y| {
             self.image.get_pixel(x, y)

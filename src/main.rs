@@ -20,14 +20,11 @@ fn main() {
         process::exit(1);
     });
 
-    let final_img = img.embed_data(&payload);
+    let final_img = img.embed_data(payload);
     final_img.save("result.bmp").unwrap_or_else(|err| {
         eprintln!("stegosaurus: {}", err);
         process::exit(1);
     });
-
-    let payload = String::from_utf8(payload).unwrap();
-    println!("Used payload: {}", payload);
 
 
 }

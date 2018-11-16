@@ -4,9 +4,10 @@ extern crate image;
 
 pub mod config;
 pub mod bmp;
+mod chunker;
 
 pub trait Embed {
-    fn embed_data(&self, data: &[u8]) -> Box<dyn Save>;
+    fn embed_data(&self, data: Vec<u8>) -> Box<dyn Save>;
 }
 
 pub trait Save {
