@@ -6,3 +6,4 @@ description = "Reads data from stdin and sends the output hidden stegonagraphica
 
 [dependencies]
 clap = "2"
+image = "0.20"

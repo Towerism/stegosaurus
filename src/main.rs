@@ -1,6 +1,8 @@
 extern crate stegosaurus;
+extern crate image;
 
 use std::process;
+use image::GenericImageView;
 
 use stegosaurus::config::Config;
 
@@ -13,6 +15,12 @@ fn main() {
 
     let payload = String::from_utf8(payload).unwrap();
 
-    println!("Using file: {}", filename);
+    let img = image::open(filename).unwrap_or_else(|err| {
+        eprintln!("stegosaurus: {}", err);
+        process::exit(1);
+    });
+
+    println!("Image dimensions: {:?}", img.dimensions());
+
     println!("Using payload: {}", payload);
 }
