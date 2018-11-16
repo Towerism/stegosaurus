@@ -1,0 +1,6 @@
+[package]
+name = "stegosaurus"
+version = "0.1.0"
+authors = ["Martin Fracker, Jr. <martin.frackerjr@gmail.com>"]
+
+[dependencies]
