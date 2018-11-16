@@ -1,6 +1,4 @@
-use std::iter::Iterator;
 use std::error::Error;
-use std::slice;
 use image::{
     DynamicImage,
     GenericImageView,

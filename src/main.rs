@@ -5,7 +5,7 @@ use std::process;
 
 use stegosaurus::config::Config;
 use stegosaurus::bmp::BmpBase;
-use stegosaurus::{Embed, Save};
+use stegosaurus::Embed;
 
 fn main() {
     let config = Config::new().unwrap_or_else(|err| {
