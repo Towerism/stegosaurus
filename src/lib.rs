@@ -3,7 +3,7 @@ extern crate clap;
 extern crate image;
 
 pub mod config;
-pub mod bmp;
+pub mod img;
 mod chunker;
 mod lsb;
 

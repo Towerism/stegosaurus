@@ -1,10 +1,9 @@
 extern crate stegosaurus;
-extern crate image;
 
 use std::process;
 
 use stegosaurus::config::Config;
-use stegosaurus::bmp::BmpBase;
+use stegosaurus::img::ImageBase;
 use stegosaurus::Embed;
 
 fn main() {
@@ -14,8 +13,7 @@ fn main() {
     });
     let Config { filename, output, payload } = config;
 
-
-    let img = BmpBase::new(&filename).unwrap_or_else(|err| {
+    let img = ImageBase::new(&filename).unwrap_or_else(|err| {
         eprintln!("stegosaurus: {}", err);
         process::exit(1);
     });

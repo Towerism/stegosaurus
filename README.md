@@ -10,7 +10,7 @@ The goal of stegosaurus is to be able to hide data in various binary forms:
 
 ## Roadmap
 
-- Basic functionality (least-significant-bit, text-only), hiding data in images (.bmp files only), retrieving data from images
+- Retrieving data from images
 - Encrypting data with passphrase
 - Support for sound files (.wav files only)
 - Add more steganographic methods (e.g. customizing how many LSBs).

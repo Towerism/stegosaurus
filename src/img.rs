@@ -10,25 +10,25 @@ use image::{
 use super::lsb;
 use super::{Embed, Save};
 
-pub struct BmpBase {
+pub struct ImageBase {
     image: DynamicImage
 }
 
-impl BmpBase {
-    pub fn new(path: &str) -> Result<BmpBase, Box<dyn Error>> {
+impl ImageBase {
+    pub fn new(path: &str) -> Result<ImageBase, Box<dyn Error>> {
         let image = image::open(path)?;
 
-        Ok(BmpBase {
+        Ok(ImageBase {
             image
         })
     }
 }
 
-struct BmpFinal {
+struct ImageFinal {
     buffer: RgbaImage
 }
 
-impl Embed for BmpBase {
+impl Embed for ImageBase {
     fn embed_data(&self, data: Vec<u8>) -> Box<dyn Save> {
         let mut data_encoder = lsb::Encoder::new(data);
         let (width, height) = self.image.dimensions();
@@ -43,13 +43,13 @@ impl Embed for BmpBase {
                 };
             }
         }
-        Box::new(BmpFinal {
+        Box::new(ImageFinal {
             buffer
         })
     }
 }
 
-impl Save for BmpFinal {
+impl Save for ImageFinal {
     fn save(&self, path: &str) -> std::io::Result<()> {
         self.buffer.save(path)
     }
