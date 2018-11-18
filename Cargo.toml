@@ -7,3 +7,6 @@ description = "Reads data from stdin and sends the output hidden stegonagraphica
 [dependencies]
 clap = "2"
 image = "0.20"
+serde = "1"
+serde_derive = "1"
+bincode = "1"

@@ -2,6 +2,8 @@ use std::io;
 use std::io::Read;
 use std::error::Error;
 
+use super::payload::Payload;
+
 pub struct Config {
     pub filename: String,
     pub output: String,
@@ -23,6 +25,8 @@ impl Config {
 
         let mut payload = Vec::new();
         io::stdin().read_to_end(&mut payload)?;
+        let payload = Payload::new(payload)?;
+        let payload = payload.bytes();
 
         Ok(Config {
             filename,
