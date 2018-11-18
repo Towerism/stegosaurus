@@ -6,6 +6,7 @@ use image::{
     RgbaImage
 };
 
+use super::lsb;
 use super::{Embed, Save};
 
 pub struct BmpBase {
@@ -28,13 +29,18 @@ struct BmpFinal {
 
 impl Embed for BmpBase {
     fn embed_data(&self, data: Vec<u8>) -> Box<dyn Save> {
+        let mut data_encoder = lsb::Encoder::new(data);
         let (width, height) = self.image.dimensions();
         let mut buffer = ImageBuffer::from_fn(width, height, |x, y| {
             self.image.get_pixel(x, y)
         });
-        for pixel in buffer.pixels_mut() {
+        'outer: for pixel in buffer.pixels_mut() {
             for i in 0..4 {
-                pixel[i] &= 0b0010_0000;
+                let subpixel = pixel[i];
+                pixel[i] = match data_encoder.encode_next(subpixel) {
+                    lsb::EncodeResult::Encoded(encoded) => encoded,
+                    lsb::EncodeResult::NotEncoded(_) => break 'outer
+                };
             }
         }
         Box::new(BmpFinal {
