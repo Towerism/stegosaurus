@@ -12,7 +12,7 @@ fn main() {
         eprintln!("stegosaurus: {}", err);
         process::exit(1);
     });
-    let Config { filename, payload } = config;
+    let Config { filename, output, payload } = config;
 
 
     let img = BmpBase::new(&filename).unwrap_or_else(|err| {
@@ -21,7 +21,7 @@ fn main() {
     });
 
     let final_img = img.embed_data(payload);
-    final_img.save("result.bmp").unwrap_or_else(|err| {
+    final_img.save(&output).unwrap_or_else(|err| {
         eprintln!("stegosaurus: {}", err);
         process::exit(1);
     });
