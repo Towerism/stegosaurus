@@ -53,9 +53,9 @@ mod tests {
         let data = vec![0b0000_0000];
         let mut encoder = Encoder::new(data);
 
-        let encoded = encoder.encode_next(0b1111_1111);
+        let encoded = encoder.encode_next(0b1010_0011);
 
-        assert_eq!(EncodeResult::Encoded(0b1111_1110), encoded);
+        assert_eq!(EncodeResult::Encoded(0b1010_0010), encoded);
     }
 
     #[test]
@@ -63,9 +63,9 @@ mod tests {
         let data = vec![0b0000_0001];
         let mut encoder = Encoder::new(data);
 
-        let encoded = encoder.encode_next(0b1111_1110);
+        let encoded = encoder.encode_next(0b0000_0000);
 
-        assert_eq!(EncodeResult::Encoded(0b1111_1111), encoded);
+        assert_eq!(EncodeResult::Encoded(0b0000_0001), encoded);
     }
 
     #[test]
@@ -79,10 +79,10 @@ mod tests {
 
     #[test]
     fn decoding_combines_8_lsb_into_one_byte() {
-        let data = vec![0x51, 0x40, 0xa1, 0x0, 0xc1, 0xa0, 0xc1, 0x31];
+        let data = vec![0x51, 0x41, 0xa0, 0x1, 0xc1, 0xa0, 0xc0, 0x31];
         let decoder = Decoder::new();
         let byte = decoder.decode_next(&data);
 
-        assert_eq!(0b1101_0101, byte);
+        assert_eq!(0b1001_1011, byte);
     }
 }

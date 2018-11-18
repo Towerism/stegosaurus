@@ -31,10 +31,9 @@ pub fn extract(config: &Config) -> Result<(), Box<dyn Error>> {
     let img = ImageBase::new(&filename)?;
     let bytes = img.extract_data();
     let payload = Payload::from_bytes(bytes);
-    let data = payload.data()?;
 
     let mut buffer = fs::File::create(&output)?;
-    buffer.write(&data)?;
+    buffer.write(&payload.bytes())?;
 
     Ok(())
 }

@@ -11,14 +11,14 @@ impl Payload {
     }
 
     pub fn new(mut data: Vec<u8>) -> Result<Payload, Box<dyn Error>> {
-        let mut header = DataHeader::new();
-        header.byte_count = Payload::calculate_size(&data);
+        //let mut header = DataHeader::new();
+        //header.byte_count = Payload::calculate_size(&data);
 
-        let mut header_data = bincode::serialize(&header)?;
-        header_data.append(&mut data);
+        //let mut header_data = bincode::serialize(&header)?;
+        //header_data.append(&mut data);
 
         Ok(Payload {
-            bytes: header_data
+            bytes: data
         })
     }
 
