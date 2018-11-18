@@ -8,9 +8,10 @@ extern crate bincode;
 
 pub mod config;
 pub mod img;
+pub mod payload;
+pub mod operation;
 mod chunker;
 mod lsb;
-mod payload;
 
 pub trait Embed {
     fn embed_data(&self, data: Vec<u8>) -> Box<dyn Save>;
