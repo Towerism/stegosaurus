@@ -6,7 +6,6 @@ pub struct Chunker {
     position: usize
 }
 
-// I think maybe reference counting for chunk is more appropriate???
 impl Chunker {
     pub fn new(data: Vec<u8>) -> Chunker {
         let chunk_masker = ChunkMasker::new(&data);
