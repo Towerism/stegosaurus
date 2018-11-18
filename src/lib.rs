@@ -20,3 +20,7 @@ pub trait Embed {
 pub trait Save {
     fn save(&self, path: &str) -> std::io::Result<()>;
 }
+
+pub trait Extract {
+    fn extract_data(&self) -> Vec<u8>;
+}

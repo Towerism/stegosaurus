@@ -8,7 +8,7 @@ use image::{
 };
 
 use super::lsb;
-use super::{Embed, Save};
+use super::{Embed, Save, Extract};
 
 pub struct ImageBase {
     image: DynamicImage
@@ -46,6 +46,22 @@ impl Embed for ImageBase {
         Box::new(ImageFinal {
             buffer
         })
+    }
+}
+
+impl Extract for ImageBase {
+    fn extract_data(&self) -> Vec<u8> {
+        let mut result = Vec::new();
+        let data_decoder = lsb::Decoder::new();
+        let bytes = self.image.raw_pixels();
+        for chunk in bytes.chunks(8) {
+            if chunk.len() < 8 {
+                break;
+            }
+            let decoded = data_decoder.decode_next(chunk);
+            result.push(decoded);
+        }
+        result
     }
 }
 

@@ -1,11 +1,13 @@
 use std::io;
-use std::io::Read;
+use std::fs;
+use std::io::{Read, Write};
 use std::error::Error;
 
 use super::payload::Payload;
 use super::config::Config;
 use super::img::ImageBase;
 use super::Embed;
+use super::Extract;
 
 pub fn embed(config: &Config) -> Result<(), Box<dyn Error>> {
     let Config { filename, output } = config;
@@ -23,7 +25,16 @@ pub fn embed(config: &Config) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn extract(_config: &Config) -> Result<(), Box<dyn Error>> {
-    eprintln!("Not yet implemented");
+pub fn extract(config: &Config) -> Result<(), Box<dyn Error>> {
+    let Config { filename, output } = config;
+
+    let img = ImageBase::new(&filename)?;
+    let bytes = img.extract_data();
+    let payload = Payload::from_bytes(bytes);
+    let data = payload.data()?;
+
+    let mut buffer = fs::File::create(&output)?;
+    buffer.write(&data)?;
+
     Ok(())
 }

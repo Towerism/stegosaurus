@@ -23,6 +23,7 @@ impl Iterator for Chunker {
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.position >= self.data.len() {
+            println!("Nope!");
             return None;
         }
         if let Some(mask) = self.chunk_masker.next() {
