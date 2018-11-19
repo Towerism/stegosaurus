@@ -18,6 +18,22 @@ the following installed on your system:
 
 - openssl
 
+## Example usage
+
+Here is an example of embedding plain text in a png file. Note that the message will
+be encrypted before being embedded.
+
+```
+$ echo "super secret message" | ./stegosaurus embed --file ~/png-files-download-6.png --output innocuous.png
+passphrase: 
+confirm:
+
+$ ./stegosaurus extract --file innocuous.png --output message.txt
+
+$ cat message.txt
+super secret message
+```
+
 ## Roadmap
 
 - Support for sound files (.wav files only)
