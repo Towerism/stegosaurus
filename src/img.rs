@@ -1,16 +1,10 @@
 use std::error::Error;
-use image::{
-    DynamicImage,
-    GenericImageView,
-    ImageBuffer,
-    RgbImage
-};
 
 use super::lsb;
 use super::{Embed, Save, Extract};
 
 pub struct ImageBase {
-    image: DynamicImage
+    image: image::DynamicImage
 }
 
 impl ImageBase {
@@ -24,22 +18,24 @@ impl ImageBase {
 }
 
 struct ImageFinal {
-    buffer: RgbImage
+    buffer: image::RgbaImage
 }
 
 impl Embed for ImageBase {
     fn embed_data(&self, data: Vec<u8>) -> Box<dyn Save> {
         let mut data_encoder = lsb::Encoder::new(data);
-        let (width, height) = self.image.dimensions();
-        let mut buffer = self.image.to_rgb().into_raw();
-        for pixel in buffer.iter_mut() {
-            *pixel = match data_encoder.encode_next(*pixel) {
-                lsb::EncodeResult::Encoded(encoded) => encoded,
-                lsb::EncodeResult::NotEncoded(_) => break
-            };
+        let mut buffer = self.image.to_rgba();
+        'outer: for pixel in buffer.pixels_mut() {
+            for i in 0..3 {
+                let subpixel = &mut pixel[i];
+                *subpixel = match data_encoder.encode_next(*subpixel) {
+                    lsb::EncodeResult::Encoded(encoded) => encoded,
+                    lsb::EncodeResult::NotEncoded(_) => break 'outer
+                };
+            }
         }
         Box::new(ImageFinal {
-            buffer: ImageBuffer::from_raw(width, height, buffer).unwrap()
+            buffer
         })
     }
 }
