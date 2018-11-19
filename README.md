@@ -11,9 +11,15 @@ The goal of stegosaurus is to be able to hide data in various binary forms:
 NOTE: tested and working with with .png and .bmp files. Tested and does not
 work with JPEG files.
 
+## Requirements
+
+Besides the rust toolchain, which is only necessary for building, you will need
+the following installed on your system:
+
+- openssl
+
 ## Roadmap
 
-- Encrypting data with passphrase
 - Support for sound files (.wav files only)
 - Add more steganographic methods (e.g. customizing how many LSBs).
 - Probably more to come
