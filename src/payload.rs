@@ -1,5 +1,6 @@
 use std::error::Error;
 use std::fmt;
+use super::InitializationVector;
 
 pub struct Payload {
     bytes: Vec<u8>
@@ -10,8 +11,8 @@ impl Payload {
         return bytes.len();
     }
 
-    pub fn new(mut data: Vec<u8>) -> Result<Payload, Box<dyn Error>> {
-        let mut header = DataHeader::new();
+    pub fn new(mut data: Vec<u8>, iv: InitializationVector) -> Result<Payload, Box<dyn Error>> {
+        let mut header = DataHeader::new(iv);
         header.byte_count = Payload::calculate_size(&data);
 
         let mut header_data = bincode::serialize(&header)?;
@@ -32,9 +33,9 @@ impl Payload {
         }
     }
 
-    pub fn data(&self) -> Result<&[u8], Box<dyn Error>> {
-        let (_, data) = DataHeader::extract_from(&self.bytes)?;
-        Ok(data)
+    pub fn data(&self) -> Result<(&[u8], InitializationVector), Box<dyn Error>> {
+        let (header, data) = DataHeader::extract_from(&self.bytes)?;
+        Ok((data, header.iv))
     }
 }
 
@@ -43,19 +44,21 @@ static MAGIC_CONSTANT: u64 = 0x1234567887654321;
 #[derive(Serialize, Deserialize, Debug)]
 pub struct DataHeader {
     magic_constant: u64,
+    pub iv: InitializationVector,
     pub byte_count: usize
 }
 
 impl DataHeader {
-    fn new() -> DataHeader {
+    fn new(iv: InitializationVector) -> DataHeader {
         DataHeader {
+            iv,
             magic_constant: MAGIC_CONSTANT,
             byte_count: 0
         }
     }
 
     fn size() -> usize {
-        let header = DataHeader::new();
+        let header = DataHeader::new([0; 16]);
         bincode::serialized_size(&header).unwrap() as usize
     }
 
