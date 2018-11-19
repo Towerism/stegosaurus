@@ -13,7 +13,6 @@ work with JPEG files.
 
 ## Roadmap
 
-- Retrieving data from images
 - Encrypting data with passphrase
 - Support for sound files (.wav files only)
 - Add more steganographic methods (e.g. customizing how many LSBs).
