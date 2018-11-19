@@ -67,7 +67,6 @@ fn encrypt_payload(payload: &[u8], key: String) -> Result<(Vec<u8>, Initializati
 pub fn extract(config: &Config) -> Result<(), Box<dyn Error>> {
     let Config { filename, output } = config;
 
-    println!("Extracting from: {}", filename);
     let img = ImageBase::new(&filename)?;
     let bytes = img.extract_data();
     let payload = Payload::from_bytes(bytes);
