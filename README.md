@@ -8,6 +8,9 @@ The goal of stegosaurus is to be able to hide data in various binary forms:
 - sound files,
 - etc.
 
+NOTE: tested and working with with .png and .bmp files. Tested and does not
+work with JPEG files.
+
 ## Roadmap
 
 - Retrieving data from images
