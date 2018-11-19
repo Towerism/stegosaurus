@@ -28,12 +28,14 @@ pub fn embed(config: &Config) -> Result<(), Box<dyn Error>> {
 pub fn extract(config: &Config) -> Result<(), Box<dyn Error>> {
     let Config { filename, output } = config;
 
+    println!("Extracting from: {}", filename);
     let img = ImageBase::new(&filename)?;
     let bytes = img.extract_data();
     let payload = Payload::from_bytes(bytes);
+    let data = payload.data()?;
 
     let mut buffer = fs::File::create(&output)?;
-    buffer.write(&payload.bytes())?;
+    buffer.write(&data)?;
 
     Ok(())
 }

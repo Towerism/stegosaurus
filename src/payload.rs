@@ -7,18 +7,18 @@ pub struct Payload {
 
 impl Payload {
     fn calculate_size(bytes: &Vec<u8>) -> usize {
-        return DataHeader::size() + bytes.len();
+        return bytes.len();
     }
 
     pub fn new(mut data: Vec<u8>) -> Result<Payload, Box<dyn Error>> {
-        //let mut header = DataHeader::new();
-        //header.byte_count = Payload::calculate_size(&data);
+        let mut header = DataHeader::new();
+        header.byte_count = Payload::calculate_size(&data);
 
-        //let mut header_data = bincode::serialize(&header)?;
-        //header_data.append(&mut data);
+        let mut header_data = bincode::serialize(&header)?;
+        header_data.append(&mut data);
 
         Ok(Payload {
-            bytes: data
+            bytes: header_data
         })
     }
 
@@ -38,7 +38,7 @@ impl Payload {
     }
 }
 
-static MAGIC_CONSTANT: u64 = 0x0;
+static MAGIC_CONSTANT: u64 = 0x1234567887654321;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct DataHeader {
@@ -66,8 +66,8 @@ impl DataHeader {
         if header.magic_constant != MAGIC_CONSTANT {
             return Err(Box::new(DataHeaderError::new(&format!("magic constant was {}, expected {}", header.magic_constant, MAGIC_CONSTANT))));
         }
-        let data_len = header.byte_count;
-        Ok((header, &bytes[header_size..data_len]))
+        let payload_len = header_size + header.byte_count;
+        Ok((header, &bytes[header_size..payload_len]))
     }
 }
 

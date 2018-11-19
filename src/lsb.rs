@@ -79,10 +79,10 @@ mod tests {
 
     #[test]
     fn decoding_combines_8_lsb_into_one_byte() {
-        let data = vec![0x51, 0x41, 0xa0, 0x1, 0xc1, 0xa0, 0xc0, 0x31];
+        let data = vec![0x51, 0x41, 0xa0, 0x0, 0xc1, 0xa1, 0xc0, 0x31];
         let decoder = Decoder::new();
         let byte = decoder.decode_next(&data);
 
-        assert_eq!(0b1001_1011, byte);
+        assert_eq!(0b1011_0011, byte);
     }
 }

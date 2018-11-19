@@ -23,7 +23,6 @@ impl Iterator for Chunker {
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.position >= self.data.len() {
-            println!("Nope!");
             return None;
         }
         if let Some(mask) = self.chunk_masker.next() {
@@ -94,7 +93,7 @@ mod tests {
 
         #[test]
         fn next_returns_the_next_bit_for_whole_byte() {
-            let mut chunker = Chunker::new(vec![0b1001_1011]);
+            let chunker = Chunker::new(vec![0b1001_1011]);
             let expected = vec![
                 0x1, 0x1, 0x0, 0x1, 0x1, 0x0, 0x0, 0x1];
 
@@ -105,10 +104,15 @@ mod tests {
 
         #[test]
         fn next_returns_the_next_bit_for_all_bytes() {
-            let mut chunker = Chunker::new(vec![0b1001_1011, 0b0010_0011]);
+            let chunker = Chunker::new(vec![0b1001_1011, 0b0010_0011, 0b0000_0000, 0b1111_1111, 0b1010_1010, 0b1111_0000]);
             let expected = vec![
-                0x1, 0x1, 0x0, 0x1, 0x1, 0x0, 0x0, 0x1,
-                0x1, 0x1, 0x0, 0x0, 0x0, 0x1, 0x0, 0x0];
+                1, 1, 0, 1, 1, 0, 0, 1,
+                1, 1, 0, 0, 0, 1, 0, 0,
+                0, 0, 0, 0, 0, 0, 0, 0,
+                1, 1, 1, 1, 1, 1, 1, 1,
+                0, 1, 0, 1, 0, 1, 0, 1,
+                0, 0, 0, 0, 1, 1, 1, 1
+            ];
 
             for (i, bit) in chunker.enumerate() {
                 assert_eq!(expected[i], bit);
