@@ -10,11 +10,12 @@ extern crate serde_derive;
 extern crate bincode;
 
 pub mod config;
-pub mod img;
-pub mod payload;
+mod img;
+mod payload;
 pub mod operation;
 mod chunker;
 mod lsb;
+mod encryption;
 
 pub trait Embed {
     fn embed_data(&self, data: Vec<u8>) -> Box<dyn Save>;
