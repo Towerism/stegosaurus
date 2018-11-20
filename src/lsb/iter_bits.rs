@@ -13,7 +13,7 @@ impl BitIterable for Vec<u8> {
 pub struct BitIterator {
     data: Vec<u8>,
     chunk_masker: MaskGenerator,
-    position: usize
+    position: usize,
 }
 
 impl BitIterator {
@@ -22,7 +22,7 @@ impl BitIterator {
         let chunker = BitIterator {
             data,
             chunk_masker,
-            position: 0
+            position: 0,
         };
         return chunker;
     }
@@ -52,18 +52,14 @@ impl Iterator for BitIterator {
 /// Generates masks for each bit in a chunk
 struct MaskGenerator {
     bits_remaining: u8,
-    mask: u8
+    mask: u8,
 }
 
 impl MaskGenerator {
     fn new(data: &Vec<u8>) -> MaskGenerator {
         MaskGenerator {
-            bits_remaining: if data.is_empty() {
-                0
-            } else {
-                8
-            },
-            mask: 0b0000_0001
+            bits_remaining: if data.is_empty() { 0 } else { 8 },
+            mask: 0b0000_0001,
         }
     }
 }
@@ -104,8 +100,7 @@ mod tests {
         #[test]
         fn next_returns_the_next_bit_for_whole_byte() {
             let chunker = BitIterator::new(vec![0b1001_1011]);
-            let expected = vec![
-                0x1, 0x1, 0x0, 0x1, 0x1, 0x0, 0x0, 0x1];
+            let expected = vec![0x1, 0x1, 0x0, 0x1, 0x1, 0x0, 0x0, 0x1];
 
             for (i, bit) in chunker.enumerate() {
                 assert_eq!(expected[i], bit);
@@ -114,14 +109,17 @@ mod tests {
 
         #[test]
         fn next_returns_the_next_bit_for_all_bytes() {
-            let chunker = BitIterator::new(vec![0b1001_1011, 0b0010_0011, 0b0000_0000, 0b1111_1111, 0b1010_1010, 0b1111_0000]);
+            let chunker = BitIterator::new(vec![
+                0b1001_1011,
+                0b0010_0011,
+                0b0000_0000,
+                0b1111_1111,
+                0b1010_1010,
+                0b1111_0000,
+            ]);
             let expected = vec![
-                1, 1, 0, 1, 1, 0, 0, 1,
-                1, 1, 0, 0, 0, 1, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0,
-                1, 1, 1, 1, 1, 1, 1, 1,
-                0, 1, 0, 1, 0, 1, 0, 1,
-                0, 0, 0, 0, 1, 1, 1, 1
+                1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1,
+                1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1,
             ];
 
             for (i, bit) in chunker.enumerate() {

@@ -1,19 +1,17 @@
 use std::error::Error;
 
-use ::lsb;
-use ::core::{Embed, Save, Extract, EmbedError};
+use core::{Embed, EmbedError, Extract, Save};
+use lsb;
 
 pub struct ImageCover {
-    image: image::DynamicImage
+    image: image::DynamicImage,
 }
 
 impl ImageCover {
     pub fn new(path: &str) -> Result<ImageCover, Box<dyn Error>> {
         let image = image::open(path)?;
 
-        Ok(ImageCover {
-            image
-        })
+        Ok(ImageCover { image })
     }
 }
 
@@ -29,7 +27,7 @@ impl Embed for ImageCover {
                 let subpixel = &mut pixel[i];
                 *subpixel = match data_encoder.encode_next(*subpixel) {
                     lsb::EncodeResult::Encoded(encoded) => encoded,
-                    lsb::EncodeResult::NotEncoded(_) => break 'outer
+                    lsb::EncodeResult::NotEncoded(_) => break 'outer,
                 };
             }
         }

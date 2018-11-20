@@ -1,9 +1,9 @@
+use super::crypto;
 use std::error::Error;
 use std::fmt;
-use super::crypto;
 
 pub struct Payload {
-    bytes: Vec<u8>
+    bytes: Vec<u8>,
 }
 
 impl Payload {
@@ -11,16 +11,17 @@ impl Payload {
         return bytes.len();
     }
 
-    pub fn new(mut data: Vec<u8>, iv: crypto::InitializationVector) -> Result<Payload, Box<dyn Error>> {
+    pub fn new(
+        mut data: Vec<u8>,
+        iv: crypto::InitializationVector,
+    ) -> Result<Payload, Box<dyn Error>> {
         let mut header = DataHeader::new(iv);
         header.byte_count = Payload::calculate_size(&data);
 
         let mut header_data = bincode::serialize(&header)?;
         header_data.append(&mut data);
 
-        Ok(Payload {
-            bytes: header_data
-        })
+        Ok(Payload { bytes: header_data })
     }
 
     pub fn bytes(self) -> Vec<u8> {
@@ -28,9 +29,7 @@ impl Payload {
     }
 
     pub fn from_bytes(bytes: Vec<u8>) -> Payload {
-        Payload {
-            bytes
-        }
+        Payload { bytes }
     }
 
     pub fn data(&self) -> Result<(&[u8], crypto::InitializationVector), Box<dyn Error>> {
@@ -45,7 +44,7 @@ static MAGIC_CONSTANT: u64 = 0x1234567887654321;
 pub struct DataHeader {
     magic_constant: u64,
     pub iv: crypto::InitializationVector,
-    pub byte_count: usize
+    pub byte_count: usize,
 }
 
 impl DataHeader {
@@ -53,7 +52,7 @@ impl DataHeader {
         DataHeader {
             iv,
             magic_constant: MAGIC_CONSTANT,
-            byte_count: 0
+            byte_count: 0,
         }
     }
 
@@ -67,7 +66,10 @@ impl DataHeader {
         let reader = bincode::SliceReader::new(&bytes[0..header_size]);
         let header: DataHeader = bincode::deserialize_from(reader)?;
         if header.magic_constant != MAGIC_CONSTANT {
-            return Err(Box::new(DataHeaderError::new(&format!("magic constant was {}, expected {}", header.magic_constant, MAGIC_CONSTANT))));
+            return Err(Box::new(DataHeaderError::new(&format!(
+                "magic constant was {}, expected {}",
+                header.magic_constant, MAGIC_CONSTANT
+            ))));
         }
         let payload_len = header_size + header.byte_count;
         Ok((header, &bytes[header_size..payload_len]))
@@ -76,12 +78,12 @@ impl DataHeader {
 
 #[derive(Debug)]
 struct DataHeaderError {
-    message: String
+    message: String,
 }
 impl DataHeaderError {
     fn new(message: &str) -> DataHeaderError {
         DataHeaderError {
-            message: String::from(message)
+            message: String::from(message),
         }
     }
 }

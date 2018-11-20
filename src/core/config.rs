@@ -3,14 +3,14 @@ use std::fmt;
 
 pub enum Operation {
     Embed(Config),
-    Extract(Config)
+    Extract(Config),
 }
 
 pub struct Config {
     pub cover: String,
     pub output: String,
     pub input: Option<String>,
-    pub passfile: Option<String>
+    pub passfile: Option<String>,
 }
 
 impl Config {
@@ -18,12 +18,14 @@ impl Config {
         let cover = matches.value_of("cover").unwrap().to_string();
         let output = matches.value_of("output").unwrap().to_string();
         let input = matches.value_of("input").map(|input| input.to_string());
-        let passfile = matches.value_of("passfile").map(|passfile| passfile.to_string());
+        let passfile = matches
+            .value_of("passfile")
+            .map(|passfile| passfile.to_string());
         Config {
             cover,
             output,
             input,
-            passfile
+            passfile,
         }
     }
 }
@@ -52,19 +54,19 @@ impl Operation {
         match matches.subcommand() {
             ("embed", matches) => Ok(Operation::Embed(Config::new(&matches.unwrap()))),
             ("extract", matches) => Ok(Operation::Extract(Config::new(&matches.unwrap()))),
-            _ => return Err(Box::new(ConfigError::new("error parsing subcommand")))
+            _ => return Err(Box::new(ConfigError::new("error parsing subcommand"))),
         }
     }
 }
 
 #[derive(Debug)]
 struct ConfigError {
-    message: String
+    message: String,
 }
 impl ConfigError {
     fn new(message: &str) -> ConfigError {
         ConfigError {
-            message: String::from(message)
+            message: String::from(message),
         }
     }
 }

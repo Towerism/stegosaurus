@@ -1,14 +1,12 @@
-use ::core::Save;
+use core::Save;
 
 pub struct ImageFinal {
-    buffer: image::RgbaImage
+    buffer: image::RgbaImage,
 }
 
 impl ImageFinal {
     pub fn new(buffer: image::RgbaImage) -> ImageFinal {
-        ImageFinal {
-            buffer
-        }
+        ImageFinal { buffer }
     }
 }
 

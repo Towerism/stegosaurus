@@ -1,11 +1,11 @@
 mod config;
+mod crypto;
 mod operation;
 mod payload;
-mod crypto;
 
 use std::process;
 
-use self::config::Operation; 
+use self::config::Operation;
 
 pub fn run() {
     let op = Operation::new().unwrap_or_else(|err| {
@@ -19,7 +19,7 @@ pub fn run() {
                 eprintln!("{}", err);
                 process::exit(1);
             });
-        },
+        }
 
         Operation::Extract(config) => {
             operation::extract(&config).unwrap_or_else(|err| {
@@ -44,13 +44,13 @@ pub trait Extract {
 
 #[derive(Debug)]
 pub struct EmbedError {
-    message: String
+    message: String,
 }
 
 impl EmbedError {
     pub fn new(message: &str) -> EmbedError {
         EmbedError {
-            message: message.to_string()
+            message: message.to_string(),
         }
     }
 }
