@@ -1,17 +1,17 @@
-use std::io;
 use std::fmt;
-use std::io::Read;
 use std::error::Error;
 use openssl::symm;
 use openssl::hash;
 
-pub type EncryptionBlock = [u8; 16];
+pub type InitializationVector = [u8; 16];
+type EncryptionKey = [u8; 32];
 
-pub fn get_payload_and_encrypt() -> Result<(Vec<u8>, EncryptionBlock), Box<dyn Error>> {
-    let mut payload = Vec::new();
-    io::stdin().read_to_end(&mut payload)?;
+pub fn encrypt_payload(payload: &[u8]) -> Result<(Vec<u8>, InitializationVector), Box<dyn Error>> {
+    let mut iv = [0; 16];
+    openssl::rand::rand_bytes(&mut iv)?;
     let passphrase = get_passphrase()?;
-    let (payload, iv) = encrypt_payload(&payload, passphrase)?;
+    let key = derive_key(&passphrase, &iv)?;
+    let payload = symm::encrypt(cipher(), &key, Some(&iv), &payload)?;
     Ok((payload, iv))
 }
 
@@ -32,30 +32,22 @@ fn read_passphrase_from_tty(prompt: &str) -> Result<String, Box<PassphraseError>
     }
 }
 
-fn encrypt_payload(payload: &[u8], passphrase: String) -> Result<(Vec<u8>, EncryptionBlock), Box<dyn Error>> {
-    let mut iv = [0; 16];
-    openssl::rand::rand_bytes(&mut iv)?;
-    let key = derive_key(&passphrase, &iv)?;
-    let payload = symm::encrypt(cipher(), &key, Some(&iv), &payload)?;
-    Ok((payload, iv))
-}
-
-fn derive_key(passphrase: &str, iv: &[u8]) -> Result<EncryptionBlock, Box<dyn Error>> {
-    let mut key = [0; 16];
+fn derive_key(passphrase: &str, iv: &[u8]) -> Result<EncryptionKey, Box<dyn Error>> {
+    let mut key = [0; 32];
     let pass = passphrase.as_bytes();
     openssl::pkcs5::pbkdf2_hmac(&pass, &iv, 3, digest(), &mut key)?;
     Ok(key)
 }
 
 fn cipher() -> symm::Cipher {
-    symm::Cipher::aes_128_cbc()
+    symm::Cipher::aes_256_cbc()
 }
 
 fn digest() -> hash::MessageDigest {
-    hash::MessageDigest::md5()
+    hash::MessageDigest::sha256()
 }
 
-pub fn decrypt_payload(payload: &[u8], iv: &EncryptionBlock) -> Result<Vec<u8>, Box<dyn Error>> {
+pub fn decrypt_payload(payload: &[u8], iv: &InitializationVector) -> Result<Vec<u8>, Box<dyn Error>> {
     let passphrase = read_passphrase_from_tty("passphrase: ")?;
     let key = derive_key(&passphrase, iv)?;
     let decrypted = symm::decrypt(cipher(), &key, Some(iv), &payload)?;

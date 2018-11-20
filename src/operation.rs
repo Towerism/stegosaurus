@@ -1,5 +1,6 @@
 use std::fs;
-use std::io::Write;
+use std::io;
+use std::io::{Read, Write};
 use std::error::Error;
 
 use super::payload::Payload;
@@ -12,7 +13,9 @@ use super::encryption;
 pub fn embed(config: &Config) -> Result<(), Box<dyn Error>> {
     let Config { filename, output } = config;
 
-    let (payload, iv) = encryption::get_payload_and_encrypt()?;
+    let mut payload = Vec::new();
+    io::stdin().read_to_end(&mut payload)?;
+    let (payload, iv) = encryption::encrypt_payload(&payload)?;
     let payload = Payload::new(payload, iv)?;
     let payload = payload.bytes();
 
@@ -20,7 +23,6 @@ pub fn embed(config: &Config) -> Result<(), Box<dyn Error>> {
 
     let final_img = img.embed_data(payload);
     final_img.save(&output)?;
-
     Ok(())
 }
 
