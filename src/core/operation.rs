@@ -10,10 +10,14 @@ use ::img::ImageCover;
 use ::core::{Embed, Extract};
 
 pub fn embed(config: &Config) -> Result<(), Box<dyn Error>> {
-    let Config { cover, output } = config;
+    let Config { cover, output, input } = config;
 
     let mut payload = Vec::new();
-    io::stdin().read_to_end(&mut payload)?;
+    let mut reader: Box<dyn Read> = match input {
+        Some(i) => Box::new(fs::File::open(i)?),
+        None => Box::new(io::stdin())
+    };
+    reader.read_to_end(&mut payload)?;
     let (payload, iv) = encryption::encrypt_payload(&payload)?;
     let payload = Payload::new(payload, iv)?;
     let payload = payload.bytes();
@@ -26,7 +30,7 @@ pub fn embed(config: &Config) -> Result<(), Box<dyn Error>> {
 }
 
 pub fn extract(config: &Config) -> Result<(), Box<dyn Error>> {
-    let Config { cover, output } = config;
+    let Config { cover, output, .. } = config;
 
     let img = ImageCover::new(&cover)?;
     let bytes = img.extract_data();

@@ -9,15 +9,18 @@ pub enum Operation {
 pub struct Config {
     pub cover: String,
     pub output: String,
+    pub input: Option<String>
 }
 
 impl Config {
     fn new(matches: &clap::ArgMatches) -> Config {
         let cover = matches.value_of("cover").unwrap().to_string();
         let output = matches.value_of("output").unwrap().to_string();
+        let input = matches.value_of("input").map(|input| input.to_string());
         Config {
             cover,
             output,
+            input
         }
     }
 }
@@ -34,10 +37,11 @@ impl Operation {
             .author(crate_authors!("\n"))
             .about(crate_description!())
             .subcommand(clap::SubCommand::with_name("embed")
-                .about("Embed data into a steganographic binary")
+                .about("Embed INPUT (or stdin) into a steganographic cover")
+                .arg(clap::Arg::from_usage("-i --input=[INPUT] 'Sets the file to be embeded in the steganographic cover'"))
                 .args(&args))
             .subcommand(clap::SubCommand::with_name("extract")
-                .about("Extract data from a steganographic binary")
+                .about("Extract data from a steganographic cover")
                 .args(&args))
             .get_matches();
 
