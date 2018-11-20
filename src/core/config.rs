@@ -7,16 +7,16 @@ pub enum Operation {
 }
 
 pub struct Config {
-    pub filename: String,
+    pub cover: String,
     pub output: String,
 }
 
 impl Config {
     fn new(matches: &clap::ArgMatches) -> Config {
-        let filename = matches.value_of("file").unwrap().to_string();
+        let cover = matches.value_of("cover").unwrap().to_string();
         let output = matches.value_of("output").unwrap().to_string();
         Config {
-            filename,
+            cover,
             output,
         }
     }
@@ -25,7 +25,7 @@ impl Config {
 impl Operation {
     pub fn new() -> Result<Operation, Box<dyn Error>> {
         let args = vec![
-            clap::Arg::from_usage("-f --file=<FILE> 'Sets the file to use as the steganographic binary'"),
+            clap::Arg::from_usage("-c --cover=<COVER> 'Sets the file to use as the steganographic cover'"),
             clap::Arg::from_usage("-o --output=<OUTPUT> 'Sets the path to use as the output'")
         ];
 
