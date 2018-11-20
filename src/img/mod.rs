@@ -1,7 +1,7 @@
 use std::error::Error;
 
 use super::lsb;
-use super::{Embed, Save, Extract, EmbedError};
+use ::core::{Embed, Save, Extract, EmbedError};
 
 pub struct ImageBase {
     image: image::DynamicImage

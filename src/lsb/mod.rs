@@ -1,4 +1,5 @@
-use ::iter_bits::{self, BitIterable};
+mod iter_bits;
+use self::iter_bits::BitIterable;
 
 #[derive(Debug)]
 #[derive(PartialEq)]

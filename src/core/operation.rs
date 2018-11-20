@@ -5,10 +5,9 @@ use std::error::Error;
 
 use super::payload::Payload;
 use super::config::Config;
-use super::img::ImageBase;
-use super::Embed;
-use super::Extract;
 use super::encryption;
+use ::img::ImageBase;
+use ::core::{Embed, Extract};
 
 pub fn embed(config: &Config) -> Result<(), Box<dyn Error>> {
     let Config { filename, output } = config;
