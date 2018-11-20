@@ -17,6 +17,31 @@ mod chunker;
 mod lsb;
 mod encryption;
 
+use std::process;
+
+use operation::Operation; 
+
+pub fn run() {
+    let op = Operation::new().unwrap_or_else(|err| {
+        eprintln!("error: {}", err);
+        process::exit(1);
+    });
+
+    match op {
+        Operation::Embed(config) => {
+            operation::embed(&config).unwrap_or_else(|err| {
+                eprintln!("{}", err);
+            });
+        },
+
+        Operation::Extract(config) => {
+            operation::extract(&config).unwrap_or_else(|err| {
+                eprintln!("error while extracting: {}", err);
+            });
+        }
+    }
+}
+
 pub trait Embed {
     fn embed_data(&self, data: Vec<u8>) -> Result<Box<dyn Save>, EmbedError>;
 }
