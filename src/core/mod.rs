@@ -1,7 +1,7 @@
 mod config;
 mod operation;
 mod payload;
-mod encryption;
+mod crypto;
 
 use std::process;
 
