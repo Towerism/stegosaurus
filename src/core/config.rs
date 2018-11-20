@@ -9,7 +9,8 @@ pub enum Operation {
 pub struct Config {
     pub cover: String,
     pub output: String,
-    pub input: Option<String>
+    pub input: Option<String>,
+    pub passfile: Option<String>
 }
 
 impl Config {
@@ -17,10 +18,12 @@ impl Config {
         let cover = matches.value_of("cover").unwrap().to_string();
         let output = matches.value_of("output").unwrap().to_string();
         let input = matches.value_of("input").map(|input| input.to_string());
+        let passfile = matches.value_of("passfile").map(|passfile| passfile.to_string());
         Config {
             cover,
             output,
-            input
+            input,
+            passfile
         }
     }
 }
@@ -29,7 +32,8 @@ impl Operation {
     pub fn new() -> Result<Operation, Box<dyn Error>> {
         let args = vec![
             clap::Arg::from_usage("-c --cover=<COVER> 'Sets the file to use as the steganographic cover'"),
-            clap::Arg::from_usage("-o --output=<OUTPUT> 'Sets the path to use as the output'")
+            clap::Arg::from_usage("-o --output=<OUTPUT> 'Sets the path to use as the output'"),
+            clap::Arg::from_usage("-p --passfile=[PASSFILE] 'Use the contents of PASSFILE instead of the tty for the passphrase'")
         ];
 
         let matches = clap::App::new("stegosaurus")

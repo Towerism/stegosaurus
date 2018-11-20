@@ -10,7 +10,7 @@ use ::img::ImageCover;
 use ::core::{Embed, Extract};
 
 pub fn embed(config: &Config) -> Result<(), Box<dyn Error>> {
-    let Config { cover, output, input } = config;
+    let Config { cover, output, input, passfile } = config;
 
     let mut payload = Vec::new();
     let mut reader: Box<dyn Read> = match input {
@@ -18,7 +18,9 @@ pub fn embed(config: &Config) -> Result<(), Box<dyn Error>> {
         None => Box::new(io::stdin())
     };
     reader.read_to_end(&mut payload)?;
-    let (payload, iv) = encryption::encrypt_payload(&payload)?;
+    let crypter = encryption::Crypter::new(passfile.to_owned())?
+        .require_passphrase_confirm();
+    let (payload, iv) = crypter.encrypt_payload(&payload)?;
     let payload = Payload::new(payload, iv)?;
     let payload = payload.bytes();
 
@@ -30,13 +32,14 @@ pub fn embed(config: &Config) -> Result<(), Box<dyn Error>> {
 }
 
 pub fn extract(config: &Config) -> Result<(), Box<dyn Error>> {
-    let Config { cover, output, .. } = config;
+    let Config { cover, output, passfile, .. } = config;
 
     let img = ImageCover::new(&cover)?;
     let bytes = img.extract_data();
     let payload = Payload::from_bytes(bytes);
     let (payload, iv) = payload.data()?;
-    let payload = encryption::decrypt_payload(payload, &iv)?;
+    let crypter = encryption::Crypter::new(passfile.to_owned())?;
+    let payload = crypter.decrypt_payload(payload, &iv)?;
 
     let mut buffer = fs::File::create(&output)?;
     buffer.write(&payload)?;
