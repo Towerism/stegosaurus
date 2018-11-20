@@ -28,5 +28,3 @@ pub trait Save {
 pub trait Extract {
     fn extract_data(&self) -> Vec<u8>;
 }
-
-pub type InitializationVector = [u8; 16];

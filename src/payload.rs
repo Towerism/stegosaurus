@@ -1,6 +1,6 @@
 use std::error::Error;
 use std::fmt;
-use super::InitializationVector;
+use super::encryption;
 
 pub struct Payload {
     bytes: Vec<u8>
@@ -11,7 +11,7 @@ impl Payload {
         return bytes.len();
     }
 
-    pub fn new(mut data: Vec<u8>, iv: InitializationVector) -> Result<Payload, Box<dyn Error>> {
+    pub fn new(mut data: Vec<u8>, iv: encryption::EncryptionBlock) -> Result<Payload, Box<dyn Error>> {
         let mut header = DataHeader::new(iv);
         header.byte_count = Payload::calculate_size(&data);
 
@@ -33,7 +33,7 @@ impl Payload {
         }
     }
 
-    pub fn data(&self) -> Result<(&[u8], InitializationVector), Box<dyn Error>> {
+    pub fn data(&self) -> Result<(&[u8], encryption::EncryptionBlock), Box<dyn Error>> {
         let (header, data) = DataHeader::extract_from(&self.bytes)?;
         Ok((data, header.iv))
     }
@@ -44,12 +44,12 @@ static MAGIC_CONSTANT: u64 = 0x1234567887654321;
 #[derive(Serialize, Deserialize, Debug)]
 pub struct DataHeader {
     magic_constant: u64,
-    pub iv: InitializationVector,
+    pub iv: encryption::EncryptionBlock,
     pub byte_count: usize
 }
 
 impl DataHeader {
-    fn new(iv: InitializationVector) -> DataHeader {
+    fn new(iv: encryption::EncryptionBlock) -> DataHeader {
         DataHeader {
             iv,
             magic_constant: MAGIC_CONSTANT,
