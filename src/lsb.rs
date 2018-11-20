@@ -1,4 +1,4 @@
-use super::chunker::Chunker;
+use ::iter_bits::{self, BitIterable};
 
 #[derive(Debug)]
 #[derive(PartialEq)]
@@ -8,18 +8,18 @@ pub enum EncodeResult {
 }
 
 pub struct Encoder {
-    chunker: Chunker
+    bit_iterator: iter_bits::BitIterator
 }
 
 impl Encoder {
     pub fn new(data: Vec<u8>) -> Encoder {
         Encoder {
-            chunker: Chunker::new(data)
+            bit_iterator: data.into_iter_bits()
         }
     }
 
     pub fn encode_next(&mut self, data: u8) -> EncodeResult {
-        match self.chunker.next() {
+        match self.bit_iterator.next() {
             Some(bit) => EncodeResult::Encoded(data & 0b1111_1110 | bit),
             None => EncodeResult::NotEncoded(data)
         }

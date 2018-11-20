@@ -13,7 +13,7 @@ pub mod config;
 mod img;
 mod payload;
 pub mod operation;
-mod chunker;
+mod iter_bits;
 mod lsb;
 mod encryption;
 

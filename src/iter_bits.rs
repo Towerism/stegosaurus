@@ -1,15 +1,25 @@
+pub trait BitIterable {
+    fn into_iter_bits(self) -> BitIterator;
+}
+
+impl BitIterable for Vec<u8> {
+    fn into_iter_bits(self) -> BitIterator {
+        BitIterator::new(self)
+    }
+}
+
 /// An iterable object that can chunk its
 /// data into n bit items.
-pub struct Chunker {
+pub struct BitIterator {
     data: Vec<u8>,
-    chunk_masker: ChunkMasker,
+    chunk_masker: MaskGenerator,
     position: usize
 }
 
-impl Chunker {
-    pub fn new(data: Vec<u8>) -> Chunker {
-        let chunk_masker = ChunkMasker::new(&data);
-        let chunker = Chunker {
+impl BitIterator {
+    pub fn new(data: Vec<u8>) -> BitIterator {
+        let chunk_masker = MaskGenerator::new(&data);
+        let chunker = BitIterator {
             data,
             chunk_masker,
             position: 0
@@ -18,7 +28,7 @@ impl Chunker {
     }
 }
 
-impl Iterator for Chunker {
+impl Iterator for BitIterator {
     type Item = u8;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -40,14 +50,14 @@ impl Iterator for Chunker {
 }
 
 /// Generates masks for each bit in a chunk
-struct ChunkMasker {
+struct MaskGenerator {
     bits_remaining: u8,
     mask: u8
 }
 
-impl ChunkMasker {
-    fn new(data: &Vec<u8>) -> ChunkMasker {
-        ChunkMasker {
+impl MaskGenerator {
+    fn new(data: &Vec<u8>) -> MaskGenerator {
+        MaskGenerator {
             bits_remaining: if data.is_empty() {
                 0
             } else {
@@ -58,7 +68,7 @@ impl ChunkMasker {
     }
 }
 
-impl Iterator for ChunkMasker {
+impl Iterator for MaskGenerator {
     type Item = u8;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -79,21 +89,21 @@ mod tests {
 
         #[test]
         fn next_returns_none_for_empty_data() {
-            let mut chunker = Chunker::new(Vec::new());
+            let mut chunker = BitIterator::new(Vec::new());
 
             assert_eq!(None, chunker.next());
         }
 
         #[test]
         fn next_returns_the_next_bit() {
-            let mut chunker = Chunker::new(vec![0b0000_0011]);
+            let mut chunker = BitIterator::new(vec![0b0000_0011]);
 
             assert_eq!(Some(0x01), chunker.next());
         }
 
         #[test]
         fn next_returns_the_next_bit_for_whole_byte() {
-            let chunker = Chunker::new(vec![0b1001_1011]);
+            let chunker = BitIterator::new(vec![0b1001_1011]);
             let expected = vec![
                 0x1, 0x1, 0x0, 0x1, 0x1, 0x0, 0x0, 0x1];
 
@@ -104,7 +114,7 @@ mod tests {
 
         #[test]
         fn next_returns_the_next_bit_for_all_bytes() {
-            let chunker = Chunker::new(vec![0b1001_1011, 0b0010_0011, 0b0000_0000, 0b1111_1111, 0b1010_1010, 0b1111_0000]);
+            let chunker = BitIterator::new(vec![0b1001_1011, 0b0010_0011, 0b0000_0000, 0b1111_1111, 0b1010_1010, 0b1111_0000]);
             let expected = vec![
                 1, 1, 0, 1, 1, 0, 0, 1,
                 1, 1, 0, 0, 0, 1, 0, 0,
