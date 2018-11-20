@@ -35,7 +35,7 @@ fn read_passphrase_from_tty(prompt: &str) -> Result<String, Box<PassphraseError>
 fn derive_key(passphrase: &str, iv: &[u8]) -> Result<EncryptionKey, Box<dyn Error>> {
     let mut key = [0; 32];
     let pass = passphrase.as_bytes();
-    openssl::pkcs5::scrypt(&pass, &iv, 8, 8, 4, 0x1000000, &mut key)?;
+    openssl::pkcs5::scrypt(&pass, &iv, 0x4000, 8, 1, 0x20000000, &mut key)?;
     Ok(key)
 }
 
