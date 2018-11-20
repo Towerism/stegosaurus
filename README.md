@@ -8,8 +8,12 @@ The goal of stegosaurus is to be able to hide data in various binary forms:
 - sound files,
 - etc.
 
-NOTE: tested and working with with .png and .bmp files. Tested and does not
-work with JPEG files.
+Should work with all image types, though only tested with bmp/jpg/png.
+
+NOTE: When embedding with a non-bitmap cover, you should specify the output
+with a bitmap-type extension (i.e. png or bmp). Due to lossy compression with
+jpg files, your data will be unrecoverable since this tool only does LSB at the
+moment.
 
 ## Requirements
 
