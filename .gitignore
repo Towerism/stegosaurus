@@ -1,2 +1,5 @@
 /target
 **/*.rs.bk
+
+resources/test/test_stega.bmp
+resources/test/test_input_extracted.txt
