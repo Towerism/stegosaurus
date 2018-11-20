@@ -35,16 +35,12 @@ fn read_passphrase_from_tty(prompt: &str) -> Result<String, Box<PassphraseError>
 fn derive_key(passphrase: &str, iv: &[u8]) -> Result<EncryptionKey, Box<dyn Error>> {
     let mut key = [0; 32];
     let pass = passphrase.as_bytes();
-    openssl::pkcs5::pbkdf2_hmac(&pass, &iv, 3, digest(), &mut key)?;
+    openssl::pkcs5::scrypt(&pass, &iv, 8, 8, 4, 0x1000000, &mut key)?;
     Ok(key)
 }
 
 fn cipher() -> symm::Cipher {
     symm::Cipher::aes_256_cbc()
-}
-
-fn digest() -> hash::MessageDigest {
-    hash::MessageDigest::sha256()
 }
 
 pub fn decrypt_payload(payload: &[u8], iv: &InitializationVector) -> Result<Vec<u8>, Box<dyn Error>> {
