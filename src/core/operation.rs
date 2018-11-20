@@ -6,7 +6,7 @@ use std::error::Error;
 use super::payload::Payload;
 use super::config::Config;
 use super::encryption;
-use ::img::ImageBase;
+use ::img::ImageCover;
 use ::core::{Embed, Extract};
 
 pub fn embed(config: &Config) -> Result<(), Box<dyn Error>> {
@@ -18,7 +18,7 @@ pub fn embed(config: &Config) -> Result<(), Box<dyn Error>> {
     let payload = Payload::new(payload, iv)?;
     let payload = payload.bytes();
 
-    let img = ImageBase::new(&filename)?;
+    let img = ImageCover::new(&filename)?;
 
     let final_img = img.embed_data(payload)?;
     final_img.save(&output)?;
@@ -28,7 +28,7 @@ pub fn embed(config: &Config) -> Result<(), Box<dyn Error>> {
 pub fn extract(config: &Config) -> Result<(), Box<dyn Error>> {
     let Config { filename, output } = config;
 
-    let img = ImageBase::new(&filename)?;
+    let img = ImageCover::new(&filename)?;
     let bytes = img.extract_data();
     let payload = Payload::from_bytes(bytes);
     let (payload, iv) = payload.data()?;

@@ -3,15 +3,15 @@ use std::error::Error;
 use super::lsb;
 use ::core::{Embed, Save, Extract, EmbedError};
 
-pub struct ImageBase {
+pub struct ImageCover {
     image: image::DynamicImage
 }
 
-impl ImageBase {
-    pub fn new(path: &str) -> Result<ImageBase, Box<dyn Error>> {
+impl ImageCover {
+    pub fn new(path: &str) -> Result<ImageCover, Box<dyn Error>> {
         let image = image::open(path)?;
 
-        Ok(ImageBase {
+        Ok(ImageCover {
             image
         })
     }
@@ -21,7 +21,7 @@ struct ImageFinal {
     buffer: image::RgbaImage
 }
 
-impl Embed for ImageBase {
+impl Embed for ImageCover {
     fn embed_data(&self, data: Vec<u8>) -> Result<Box<dyn Save>, EmbedError> {
         let mut buffer = self.image.to_rgba();
         if buffer.len() / 4 * 3 < data.len() {
@@ -43,14 +43,14 @@ impl Embed for ImageBase {
     }
 }
 
-impl Extract for ImageBase {
+impl Extract for ImageCover {
     fn extract_data(&self) -> Vec<u8> {
         let bytes = self.image.to_rgb().into_raw();
-        ImageBase::extract_data_from_buffer(&bytes)
+        ImageCover::extract_data_from_buffer(&bytes)
     }
 }
 
-impl ImageBase {
+impl ImageCover {
     fn extract_data_from_buffer(buffer: &[u8]) -> Vec<u8> {
         let mut result = Vec::new();
         let data_decoder = lsb::Decoder::new();
