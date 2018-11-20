@@ -19,7 +19,7 @@ mod encryption;
 
 use std::process;
 
-use operation::Operation; 
+use config::Operation; 
 
 pub fn run() {
     let op = Operation::new().unwrap_or_else(|err| {
@@ -31,12 +31,14 @@ pub fn run() {
         Operation::Embed(config) => {
             operation::embed(&config).unwrap_or_else(|err| {
                 eprintln!("{}", err);
+                process::exit(1);
             });
         },
 
         Operation::Extract(config) => {
             operation::extract(&config).unwrap_or_else(|err| {
                 eprintln!("error while extracting: {}", err);
+                process::exit(1);
             });
         }
     }
