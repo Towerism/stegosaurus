@@ -31,7 +31,7 @@ impl Config {
 }
 
 impl Operation {
-    pub fn new() -> Result<Operation, Box<dyn Error>> {
+    pub fn new(argv: Vec<String>) -> Result<Operation, Box<dyn Error>> {
         let args = vec![
             clap::Arg::from_usage("-c --cover=<COVER> 'Sets the file to use as the steganographic cover'"),
             clap::Arg::from_usage("-o --output=<OUTPUT> 'Sets the path to use as the output'"),
@@ -49,7 +49,7 @@ impl Operation {
             .subcommand(clap::SubCommand::with_name("extract")
                 .about("Extract data from a steganographic cover")
                 .args(&args))
-            .get_matches();
+            .get_matches_from(argv);
 
         match matches.subcommand() {
             ("embed", matches) => Ok(Operation::Embed(Config::new(&matches.unwrap()))),

@@ -7,8 +7,8 @@ use std::process;
 
 use self::config::Operation;
 
-pub fn run() {
-    let op = Operation::new().unwrap_or_else(|err| {
+pub fn run(argv: Vec<String>) {
+    let op = Operation::new(argv).unwrap_or_else(|err| {
         eprintln!("error: {}", err);
         process::exit(1);
     });
