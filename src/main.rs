@@ -15,7 +15,7 @@ fn main() {
     match op {
         Operation::Embed(config) => {
             operation::embed(&config).unwrap_or_else(|err| {
-                eprintln!("error while embedding: {}", err);
+                eprintln!("{}", err);
             });
         },
 

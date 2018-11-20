@@ -1,7 +1,7 @@
 use std::error::Error;
 
 use super::lsb;
-use super::{Embed, Save, Extract};
+use super::{Embed, Save, Extract, EmbedError};
 
 pub struct ImageBase {
     image: image::DynamicImage
@@ -22,9 +22,12 @@ struct ImageFinal {
 }
 
 impl Embed for ImageBase {
-    fn embed_data(&self, data: Vec<u8>) -> Box<dyn Save> {
-        let mut data_encoder = lsb::Encoder::new(data);
+    fn embed_data(&self, data: Vec<u8>) -> Result<Box<dyn Save>, EmbedError> {
         let mut buffer = self.image.to_rgba();
+        if buffer.len() / 4 * 3 < data.len() {
+            return Err(EmbedError::new("cover image is too small"));
+        }
+        let mut data_encoder = lsb::Encoder::new(data);
         'outer: for pixel in buffer.pixels_mut() {
             for i in 0..3 {
                 let subpixel = &mut pixel[i];
@@ -34,9 +37,9 @@ impl Embed for ImageBase {
                 };
             }
         }
-        Box::new(ImageFinal {
+        Ok(Box::new(ImageFinal {
             buffer
-        })
+        }))
     }
 }
 

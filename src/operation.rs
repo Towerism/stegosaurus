@@ -21,7 +21,7 @@ pub fn embed(config: &Config) -> Result<(), Box<dyn Error>> {
 
     let img = ImageBase::new(&filename)?;
 
-    let final_img = img.embed_data(payload);
+    let final_img = img.embed_data(payload)?;
     final_img.save(&output)?;
     Ok(())
 }
