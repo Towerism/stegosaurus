@@ -1,24 +1,24 @@
-pub trait BitIterable {
-    fn into_iter_bits(self) -> BitIterator;
+use std::iter::Iterator;
+
+pub trait ViewBits {
+    fn view_bits(self) -> BitsView;
 }
 
-impl BitIterable for Vec<u8> {
-    fn into_iter_bits(self) -> BitIterator {
-        BitIterator::new(self)
+impl ViewBits for Vec<u8> {
+    fn view_bits(self) -> BitsView {
+        BitsView::new(self)
     }
 }
 
-/// An iterable object that can chunk its
-/// data into n bit items.
-pub struct BitIterator {
+pub struct BitsView {
     data: Vec<u8>,
     position: usize,
     bit_count: usize
 }
 
-impl BitIterator {
-    pub fn new(data: Vec<u8>) -> BitIterator {
-        let bits = BitIterator {
+impl BitsView {
+    pub fn new(data: Vec<u8>) -> BitsView {
+        let bits = BitsView {
             bit_count: data.len() * 8,
             data,
             position: 0
@@ -39,7 +39,7 @@ impl BitIterator {
     }
 }
 
-impl Iterator for BitIterator {
+impl Iterator for BitsView {
     type Item = u8;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -56,21 +56,21 @@ mod tests {
 
         #[test]
         fn next_returns_none_for_empty_data() {
-            let mut bits = BitIterator::new(Vec::new());
+            let mut bits = BitsView::new(Vec::new());
 
             assert_eq!(None, bits.next());
         }
 
         #[test]
         fn next_returns_the_next_bit() {
-            let mut bits = BitIterator::new(vec![0b0000_0011]);
+            let mut bits = BitsView::new(vec![0b0000_0011]);
 
             assert_eq!(Some(0x01), bits.next());
         }
 
         #[test]
         fn next_returns_the_next_bit_for_whole_byte() {
-            let bits = BitIterator::new(vec![0b1001_1011]);
+            let bits = BitsView::new(vec![0b1001_1011]);
             let expected = vec![0x1, 0x1, 0x0, 0x1, 0x1, 0x0, 0x0, 0x1];
 
             for (i, bit) in bits.enumerate() {
@@ -80,7 +80,7 @@ mod tests {
 
         #[test]
         fn next_returns_the_next_bit_for_all_bytes() {
-            let bits = BitIterator::new(vec![
+            let bits = BitsView::new(vec![
                 0b1001_1011,
                 0b0010_0011,
                 0b0000_0000,
@@ -104,25 +104,25 @@ mod tests {
 
         #[test]
         fn first_bit() {
-            let bits = BitIterator::new(vec![0b0000_0001]);
+            let bits = BitsView::new(vec![0b0000_0001]);
             assert_eq!(0x1, bits.get_bit(0).unwrap());
         }
 
         #[test]
         fn last_bit() {
-            let bits = BitIterator::new(vec![0b1000_0000]);
+            let bits = BitsView::new(vec![0b1000_0000]);
             assert_eq!(0x1, bits.get_bit(7).unwrap());
         }
 
         #[test]
         fn several_bytes() {
-            let bits = BitIterator::new(vec![0b0000_0000, 0b0000_0000, 0b0010_0000]);
+            let bits = BitsView::new(vec![0b0000_0000, 0b0000_0000, 0b0010_0000]);
             assert_eq!(0x1, bits.get_bit(21).unwrap());
         }
 
         #[test]
         fn no_data() {
-            let bits = BitIterator::new(Vec::new());
+            let bits = BitsView::new(Vec::new());
             assert_eq!(None, bits.get_bit(0));
         }
     }

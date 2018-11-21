@@ -1,5 +1,5 @@
-mod iter_bits;
-use self::iter_bits::BitIterable;
+mod bits_view;
+use self::bits_view::ViewBits;
 
 #[derive(Debug, PartialEq)]
 pub enum EncodeResult {
@@ -8,18 +8,18 @@ pub enum EncodeResult {
 }
 
 pub struct Encoder {
-    bit_iterator: iter_bits::BitIterator,
+    bits: bits_view::BitsView
 }
 
 impl Encoder {
     pub fn new(data: Vec<u8>) -> Encoder {
         Encoder {
-            bit_iterator: data.into_iter_bits(),
+            bits: data.view_bits(),
         }
     }
 
     pub fn encode_using_bit_at(&self, data: u8, index: usize) -> EncodeResult {
-        match self.bit_iterator.get_bit(index) {
+        match self.bits.get_bit(index) {
             Some(bit) => EncodeResult::Encoded(data & 0b1111_1110 | bit),
             None => EncodeResult::NotEncoded(data)
         }
