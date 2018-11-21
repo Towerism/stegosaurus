@@ -5,32 +5,26 @@ use lsb;
 
 pub struct ImageCover {
     image: image::DynamicImage,
+    data_encoder: Option<lsb::Encoder>
 }
 
 impl ImageCover {
-    pub fn new(path: &str) -> Result<ImageCover, Box<dyn Error>> {
+    pub fn new(path: &str, data_encoder: Option<lsb::Encoder>) -> Result<ImageCover, Box<dyn Error>> {
         let image = image::open(path)?;
 
-        Ok(ImageCover { image })
+        Ok(ImageCover {
+            image,
+            data_encoder
+        })
     }
 }
 
 impl Embed for ImageCover {
-    fn embed_data(&self, data: Vec<u8>) -> Result<Box<dyn Save>, EmbedError> {
+    fn embed_data(&self) -> Result<Box<dyn Save>, EmbedError> {
         let mut buffer = self.image.to_rgba();
-        if buffer.len() / 4 * 3 < data.len() {
-            return Err(EmbedError::new("cover image is too small"));
-        }
-        let mut data_encoder = lsb::Encoder::new(data);
-        'outer: for pixel in buffer.pixels_mut() {
-            for i in 0..3 {
-                let subpixel = &mut pixel[i];
-                *subpixel = match data_encoder.encode_next(*subpixel) {
-                    lsb::EncodeResult::Encoded(encoded) => encoded,
-                    lsb::EncodeResult::NotEncoded(_) => break 'outer,
-                };
-            }
-        }
+        buffer.pixels_mut().enumerate().for_each(|(i, mut pixel)| {
+            self.encode_data_in_pixel(i, &mut pixel);
+        });
         Ok(Box::new(super::ImageFinal::new(buffer)))
     }
 }
@@ -43,6 +37,19 @@ impl Extract for ImageCover {
 }
 
 impl ImageCover {
+    fn encode_data_in_pixel(&self, pixel_index: usize, pixel: &mut image::Rgba<u8>) -> bool {
+        let data_encoder = self.data_encoder.as_ref().unwrap();
+        for i in 0..3 {
+            let subpixel = &mut pixel[i];
+            let index = pixel_index * 3 + i;
+            *subpixel = match data_encoder.encode_using_bit_at(*subpixel, index) {
+                lsb::EncodeResult::Encoded(encoded) => encoded,
+                lsb::EncodeResult::NotEncoded(_) => return false
+            };
+        }
+        true
+    }
+
     fn extract_data_from_buffer(buffer: &[u8]) -> Vec<u8> {
         let mut result = Vec::new();
         let data_decoder = lsb::Decoder::new();

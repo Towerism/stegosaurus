@@ -31,7 +31,7 @@ pub fn run(argv: Vec<String>) {
 }
 
 pub trait Embed {
-    fn embed_data(&self, data: Vec<u8>) -> Result<Box<dyn Save>, EmbedError>;
+    fn embed_data(&self) -> Result<Box<dyn Save>, EmbedError>;
 }
 
 pub trait Save {

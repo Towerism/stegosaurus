@@ -18,10 +18,10 @@ impl Encoder {
         }
     }
 
-    pub fn encode_next(&mut self, data: u8) -> EncodeResult {
-        match self.bit_iterator.next() {
+    pub fn encode_using_bit_at(&self, data: u8, index: usize) -> EncodeResult {
+        match self.bit_iterator.get_bit(index) {
             Some(bit) => EncodeResult::Encoded(data & 0b1111_1110 | bit),
-            None => EncodeResult::NotEncoded(data),
+            None => EncodeResult::NotEncoded(data)
         }
     }
 }
@@ -51,9 +51,9 @@ mod tests {
     #[test]
     fn encoding_zero_bit_clears_lsb() {
         let data = vec![0b0000_0000];
-        let mut encoder = Encoder::new(data);
+        let encoder = Encoder::new(data);
 
-        let encoded = encoder.encode_next(0b1010_0011);
+        let encoded = encoder.encode_using_bit_at(0b1010_0011, 0);
 
         assert_eq!(EncodeResult::Encoded(0b1010_0010), encoded);
     }
@@ -61,9 +61,9 @@ mod tests {
     #[test]
     fn encoding_one_bit_sets_lsb() {
         let data = vec![0b0000_0001];
-        let mut encoder = Encoder::new(data);
+        let encoder = Encoder::new(data);
 
-        let encoded = encoder.encode_next(0b0000_0000);
+        let encoded = encoder.encode_using_bit_at(0b0000_0000, 0);
 
         assert_eq!(EncodeResult::Encoded(0b0000_0001), encoded);
     }

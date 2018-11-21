@@ -28,9 +28,9 @@ pub fn embed(config: &Config) -> Result<(), Box<dyn Error>> {
     let payload = Payload::new(payload, iv)?;
     let payload = payload.bytes();
 
-    let img = ImageCover::new(&cover)?;
+    let img = ImageCover::new(&cover, Some(::lsb::Encoder::new(payload)))?;
 
-    let final_img = img.embed_data(payload)?;
+    let final_img = img.embed_data()?;
     final_img.save(&output)?;
     Ok(())
 }
@@ -43,7 +43,7 @@ pub fn extract(config: &Config) -> Result<(), Box<dyn Error>> {
         ..
     } = config;
 
-    let img = ImageCover::new(&cover)?;
+    let img = ImageCover::new(&cover, None)?;
     let bytes = img.extract_data();
     let payload = Payload::from_bytes(bytes);
     let (payload, iv) = payload.data()?;
