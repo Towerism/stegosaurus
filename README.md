@@ -1,5 +1,7 @@
 # Stegosaurus
 
+[![Travis (.org)](https://img.shields.io/travis/Towerism/stegosaurus.svg)](https://www.github.com:Towerism/stegosaurus)
+
 > A steganographic binary generation tool
 
 The goal of stegosaurus is to be able to hide data in various binary forms:
