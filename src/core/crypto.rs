@@ -1,4 +1,5 @@
 use openssl::symm;
+use openssl::hash::MessageDigest;
 use std::error::Error;
 use std::fmt;
 use std::fs;
@@ -70,7 +71,7 @@ impl Crypter {
     fn derive_key(passphrase: &str, iv: &[u8]) -> Result<EncryptionKey, Box<dyn Error>> {
         let mut key = [0; 32];
         let pass = passphrase.as_bytes();
-        openssl::pkcs5::scrypt(&pass, &iv, 0x4000, 8, 1, 0x20000000, &mut key)
+        openssl::pkcs5::pbkdf2_hmac(&pass, &iv, 3, MessageDigest::md5(), &mut key)
             .map_err(|_| Box::new(EncryptionError::new("failed to generate AES key")))?;
         Ok(key)
     }
