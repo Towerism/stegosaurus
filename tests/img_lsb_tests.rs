@@ -1,5 +1,3 @@
-#![feature(test)]
-
 extern crate stegosaurus;
 
 use std::io::Read;
