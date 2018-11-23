@@ -52,8 +52,12 @@ impl Crypter {
         let passphrase = match self.passphrase_reader {
             None => {
                 let passphrase = rpassword::read_password_from_tty(Some("passphrase: "))?;
-                let confirm = rpassword::read_password_from_tty(Some("confirm: "))?;
-                if self.require_confirm && confirm != passphrase {
+                let confirm = if self.require_confirm {
+                    Some(rpassword::read_password_from_tty(Some("confirm: "))?)
+                } else {
+                    None
+                };
+                if self.require_confirm && confirm.unwrap() != passphrase {
                     return Err(Box::new(EncryptionError::new("passphrases did not match")));
                 }
                 passphrase
