@@ -8,7 +8,7 @@ pub enum EncodeResult {
 }
 
 pub struct Encoder {
-    bits: bits_view::BitsView
+    bits: bits_view::BitsView,
 }
 
 impl Encoder {
@@ -21,7 +21,7 @@ impl Encoder {
     pub fn encode_using_bit_at(&self, data: u8, index: usize) -> EncodeResult {
         match self.bits.get_bit(index) {
             Some(bit) => EncodeResult::Encoded(data & 0b1111_1110 | bit),
-            None => EncodeResult::NotEncoded(data)
+            None => EncodeResult::NotEncoded(data),
         }
     }
 }

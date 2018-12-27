@@ -1,5 +1,5 @@
-use openssl::symm;
 use openssl::hash::MessageDigest;
+use openssl::symm;
 use std::error::Error;
 use std::fmt;
 use std::fs;

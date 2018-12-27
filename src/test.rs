@@ -11,7 +11,7 @@ pub fn embed(cover: &str, input: &str, output: &str, passfile: &str) {
         "--output".to_string(),
         resource(output),
         "--passfile".to_string(),
-        resource(passfile)
+        resource(passfile),
     ];
     ::core::run(argv);
 }
@@ -25,7 +25,7 @@ pub fn extract(cover: &str, output: &str, passfile: &str) {
         "--output".to_string(),
         resource(output),
         "--passfile".to_string(),
-        resource(passfile)
+        resource(passfile),
     ];
     ::core::run(argv);
 }

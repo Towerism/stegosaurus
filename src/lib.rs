@@ -9,7 +9,7 @@ extern crate rpassword;
 extern crate serde_derive;
 extern crate bincode;
 
-pub mod test;
 pub mod core;
 mod img;
 mod lsb;
+pub mod test;

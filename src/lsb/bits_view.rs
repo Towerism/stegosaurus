@@ -13,7 +13,7 @@ impl ViewBits for Vec<u8> {
 pub struct BitsView {
     data: Vec<u8>,
     position: usize,
-    bit_count: usize
+    bit_count: usize,
 }
 
 impl BitsView {
@@ -21,7 +21,7 @@ impl BitsView {
         let bits = BitsView {
             bit_count: data.len() * 8,
             data,
-            position: 0
+            position: 0,
         };
         return bits;
     }

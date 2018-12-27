@@ -5,16 +5,19 @@ use lsb;
 
 pub struct ImageCover {
     image: image::DynamicImage,
-    data_encoder: Option<lsb::Encoder>
+    data_encoder: Option<lsb::Encoder>,
 }
 
 impl ImageCover {
-    pub fn new(path: &str, data_encoder: Option<lsb::Encoder>) -> Result<ImageCover, Box<dyn Error>> {
+    pub fn new(
+        path: &str,
+        data_encoder: Option<lsb::Encoder>,
+    ) -> Result<ImageCover, Box<dyn Error>> {
         let image = image::open(path)?;
 
         Ok(ImageCover {
             image,
-            data_encoder
+            data_encoder,
         })
     }
 }
@@ -44,7 +47,7 @@ impl ImageCover {
             let index = pixel_index * 3 + i;
             *subpixel = match data_encoder.encode_using_bit_at(*subpixel, index) {
                 lsb::EncodeResult::Encoded(encoded) => encoded,
-                lsb::EncodeResult::NotEncoded(_) => return false
+                lsb::EncodeResult::NotEncoded(_) => return false,
             };
         }
         true
