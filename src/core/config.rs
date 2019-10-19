@@ -42,6 +42,7 @@ impl Operation {
             .version(crate_version!())
             .author(crate_authors!("\n"))
             .about(crate_description!())
+            .setting(clap::AppSettings::ArgRequiredElseHelp)
             .subcommand(clap::SubCommand::with_name("embed")
                 .about("Embed INPUT (or stdin) into a steganographic cover")
                 .arg(clap::Arg::from_usage("-i --input=[INPUT] 'Sets the file to be embeded in the steganographic cover'"))
